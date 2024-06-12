@@ -34,8 +34,12 @@ This repository contains my project developed for the Mobile Application Develop
 	pip install -r requirements.txt
 	``` 
 ## Usage
+1. Create the database file
+   ```bash
+   python create_db.py
+   ```
 
-Run the application
+2. Run the application
 ```bash
 python app.py
 ```
