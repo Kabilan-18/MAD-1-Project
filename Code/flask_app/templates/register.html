@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="container mt-5" style="max-width: 500px;">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-center">Register</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+          {{ form.hidden_tag() }}
+          <div class="mb-4">
+            <label for="username" class="form-label">Username</label>
+            {{ form.username(class="form-control") }}
+          </div>
+          <div class="mb-4">
+            <label for="email" class="form-label">Email</label>
+            {{ form.email(class="form-control") }}
+          </div>
+          <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            {{ form.password(class="form-control") }}
+          </div>
+          <div class="mb-4">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            {{ form.confirm_password(class="form-control") }}
+          </div>
+          <div class="form-group text-center">
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

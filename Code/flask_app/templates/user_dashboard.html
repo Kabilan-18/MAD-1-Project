@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 text-center">User Dashboard</h1>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Distribution of Books by Status</h5>
+                    <img src="{{ url_for('static', filename='charts/user_bar_chart.png') }}" alt="Bar Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Distribution of Completed Books by Section</h5>
+                    <img src="{{ url_for('static', filename='charts/user_pie_chart.png') }}" alt="Pie Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

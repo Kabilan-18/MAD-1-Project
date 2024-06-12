@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    {% for section in sections %}
+        {% if section.books %}
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h2>{{ section.name }} Books</h2>
+                    <p class="text-muted">{{ section.description }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for book in section.books %}
+                            <div class="col-lg-12 mb-4">
+                                <div class="card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        {% if book.reviews %}
+                                            {% set average_rating = book.reviews|map(attribute='rating')|sum / book.reviews|length %}
+                                        {% else %}
+                                            {% set average_rating = 0 %}
+                                        {% endif %}
+                                        <div>
+                                            <h5 class="card-title">{{ book.name }} by {{ book.authors }}</h5>
+                                            {% if average_rating != 0 %}
+                                            <p class="card-text">Average Rating {{ average_rating }}</h1>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            {% if book.reviews %}
+                                                <div class="mt-3">
+                                                    <h6>Reviews</h6>
+                                                    <ul class="list-group">
+                                                        {% for review in book.reviews %}
+                                                            <li class="list-group-item">
+                                                                <div>
+                                                                    <p class="mb-1">{{ review.review }}</p>
+                                                                    <p class="text-muted">By: {{ review.user.username }}</p>
+                                                                </div>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            {% else %}
+                                                <p>There are no ratings or reviews yet.</p>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            {% if current_user.is_authenticated and current_user.role == 'user' %}
+                                                {% set requested_book_ids = current_user.book_requests|map(attribute='book_id')|list %}
+                                                {% set issued_book_ids = current_user.issued_books|map(attribute='id')|list %}
+
+                                                {% if book.id in requested_book_ids and book.id not in issued_book_ids %}
+                                                    {% if current_user.book_requests|selectattr('book_id', 'eq', book.id)|selectattr('request_status', 'eq', 'pending')|list %}
+                                                        <button type="button" class="btn btn-warning" disabled>Pending</button>
+                                                    {% endif %}
+                                                {% elif book.id in issued_book_ids %}
+                                                    <button type="button" class="btn btn-success" disabled>Issued</button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#requestModal{{ book.id }}">Request</button>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            <div class="modal fade" id="requestModal{{ book.id }}" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel{{ book.id }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="requestModalLabel{{ book.id }}">Request Book Usage</h5>
+                                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="/request/{{ book.id }}" method="post">
+                                                                <p>How many days do you want to use the book?</p>
+                                                                <input type="number" class="form-control" id="days{{ book.id }}" name="days">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Request</button>
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

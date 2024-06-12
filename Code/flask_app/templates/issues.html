@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-primary mb-4">
+        <div class="card-header">
+            <h2 class="card-title mb-0">Book Requests</h2>
+        </div>
+        <div class="card-body">
+            {% if book_requests %}
+                {% for request in book_requests %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="card-title mb-2">{{ request.book.name }} by {{ request.book.authors }}</h3>
+                        <p class="card-text mt-3"><strong>User:</strong> {{ request.requested_by.username }}</p>
+                        <p class="card-text"><strong>Days Requested:</strong> {{ request.days_requested }}</p>
+                        <p class="card-text"><strong>Status:</strong> <span class="badge badge-pill bg-info">{{ request.request_status }}</span></p>
+                        <p class="card-text"><strong>Date Requested:</strong> {{ request.date_requested.strftime('%Y-%m-%d %H:%M') }}</p>
+                        {% if request.request_status == 'pending' %}
+                        <div class="text-end">
+                            <a href="{{ url_for('issue_book', book_request_id=request.id ) }}" class="btn btn-outline-primary">Issue Book</a>
+                            <a href="{{ url_for('reject_request', book_request_id=request.id) }}" class="btn btn-outline-danger me-2">Reject Request</a>
+                        </div>
+                        {% endif %}
+                        {% if request.request_status == 'issued' %}
+                        <div class="text-end">
+                            <a href="{{ url_for('revoke_book', book_request_id=request.id) }}" class="btn btn-outline-danger">Revoke Book</a>
+                        <div>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="alert alert-info" role="info">
+                <i class="fas fa-exclamation-circle"></i> &nbsp; There are no book requests at the moment.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

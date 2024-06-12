@@ -1,0 +1,132 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Pending Requests</h2>
+                    <ul class="list-group">
+                        {% if current_user.book_requests|selectattr('request_status', 'equalto', 'pending')|list %}
+                            {% for request in current_user.book_requests %}
+                                {% if request.request_status == 'pending' %}
+                                    <li class="list-group-item">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div style="flex: 1;">
+                                                    <h5>{{ request.book.name }} by {{ request.book.authors }}</h5> 
+                                                    <p class="text-muted mb-1">Section : {{request.book.section.name }} </p>
+                                                    <p class="text-muted mb-1">Date Requested: {{ request.date_requested.strftime('%Y-%m-%d %H:%M') }}</p>
+                                                    <p class="text-muted mb-1">Days Requested: {{ request.days_requested }}</p>
+                                                </div>
+                                                <div>
+                                                    <a href="/cancel-request/{{ request.id }}" class="btn btn-danger">Cancel Request</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <div class="col mt-2">
+                            <div class="alert alert-info" role="info">
+                                <i class="fas fa-exclamation-circle"></i> &nbsp; No Pending Requests found. You can request a book from the home page.
+                            </div>
+                        </div>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Issued Books</h2>
+                    <ul class="list-group">
+                        {% if current_user.issued_books %}
+                        {% for book in current_user.issued_books %}
+                        <li class="list-group-item">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5>{{ book.name }} by {{ book.authors }}</h5>
+                                    <p class="text-muted mb-1">Section: {{ book.section.name }}</p>
+                                    <p class="text-muted mb-1">Author(s): {{ book.authors }}</p>
+                                </div>
+                                <div>
+                                    <a class="btn btn-outline-success" href="{{ url_for('display_book', book_id=book.id) }}">Read</a>
+                                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#returnBookModal{{ book.id }}">Return</button>
+                                </div>
+                            </div>
+                        </li>
+                        <div class="modal fade" id="returnBookModal{{ book.id }}" tabindex="-1" role="dialog" aria-labelledby="returnBookModalLabel{{ book.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="returnBookModalLabel{{ book.id }}">Return Book</h5>
+                                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ url_for('return_book', book_id=book.id) }}" method="post">
+                                            <div class="form-group">
+                                                <label for="rating{{ book.id }}" class="mb-1">How would you rate this book? (1-5 stars)</label>
+                                                <input type="number" class="form-control" id="rating{{ book.id }}" name="rating" min="1" max="5" required>
+                                            </div>
+                                            <div class="form-group mt-3">
+                                                <label for="review{{ book.id }}" class="mb-1">Tell us your review</label>
+                                                <textarea class="form-control" id="review{{ book.id }}" name="review" rows="3" required></textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="col">
+                            <div class="alert alert-info mt-2" role="info">
+                                <i class="fas fa-exclamation-circle"></i> &nbsp; No Issued Books found. Please wait until your request is approved or request books from the home page.
+                            </div>
+                        </div>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Completed Books</h2>
+                    <ul class="list-group">
+                        {% if current_user.completed_books %}
+                            {% for book in current_user.completed_books %}
+                                <li class="list-group-item">
+                                    <div class="card-body">
+                                        <span>{{ book.name }} by {{ book.authors }}</span> 
+                                        <p class="mb-1">Section : {{ book.section.name }} </p>
+                                                           
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                        <div class="col">
+                            <div class="alert alert-info mt-2" role="info">
+                                <i class="fas fa-exclamation-circle"></i> &nbsp; No Completed Books found. Keep reading to see your completed books here.
+                            </div>
+                        </div>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

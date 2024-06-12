@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card border-0 shadow mb-4">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="static/books.jpg" class="img-fluid rounded-start" alt="Card Image" style="object-fit: fit; height: 100%; width: 100%;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Manage Books</h2>
+                    <p class="card-text">Here you can add, update, and delete books.</p>
+                    <form method="POST" action="{{ url_for('add_book') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            {{ form.name(class="form-control", id="name", placeholder="Enter book name", required=True) }}
+                            <div class="invalid-feedback">
+                                Please provide a name for the book.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pdf" class="form-label">PDF</label>
+                            {{ form.pdf(class="form-control", id="pdf", required=True) }}
+                            <div class="invalid-feedback">
+                                Please upload a PDF file.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="authors" class="form-label">Authors</label>
+                            {{ form.authors(class="form-control", id="authors", placeholder="Enter book authors", required=True) }}
+                            <div class="invalid-feedback">
+                                Please provide the authors of the book.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="section" class="form-label">Section</label>
+                            <select class="form-select" id="section" name="section" required>
+                                {% for section in sections %}
+                                <option value="{{ section.id }}">{{ section.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a section for the book.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> &nbsp; Add Book
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Existing Books</h2>
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% if books|length == 0 %}
+                    <div class="col-md-12">
+                        <div class="alert alert-info" role="info">
+                            <i class="fas fa-exclamation-circle"></i> &nbsp; No books found. Please add a book to get started.
+                        </div>
+                    </div>
+                {% endif %}
+                {% for book in books %}
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.name }}</h5>
+                                <p class="card-text mb-1"><strong>Section:</strong> {{ book.section.name }}</p>
+                                <p class="card-text mb-3"><strong>Author(s):</strong> {{ book.authors }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ url_for('display_book', book_id=book.id) }}" class="btn btn btn-outline-success me-2">View</a>
+                                    <button type="button" class="btn btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#updateModal{{ book.id }}">Update</button>
+                                    <button type="button" class="btn btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ book.id }}">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if loop.index is even %}
+                        </div><div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+
+<!-- Update Modal -->
+{% for book in books %}
+<div class="modal fade" id="updateModal{{ book.id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ book.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel{{ book.id }}">Update Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('update_book', book_id=book.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ book.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="authors" class="form-label">Authors</label>
+                        <input type="text" class="form-control" id="authors" name="authors" value="{{ book.authors }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select" id="section" name="section" required>
+                            {% for section in sections %}
+                            <option value="{{ section.id }}" {% if section.id == book.section.id %}selected{% endif %}>{{ section.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Book</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for book in books %}
+<div class="modal fade" id="deleteModal{{ book.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ book.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ book.id }}">Delete Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the book - {{ book.name }}?</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}">
+                    {{ form.hidden_tag() }}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

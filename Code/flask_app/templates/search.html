@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4"> Search results for {{ search_category }} - '{{ search_query }}'</h1>
+
+    <div class="row">
+        {% if books %}
+            {% for book in books %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.name }}</h5>
+                            <p class="card-text">Author: {{ book.authors }}</p>
+                            <p class="card-text">Section: {{ book.section.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if sections %}
+            {% for section in sections %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ section.name }}</h5>
+                            {% for book in section.books %}
+                                <p class="card-text">{{ book.name }} by {{ book.authors }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

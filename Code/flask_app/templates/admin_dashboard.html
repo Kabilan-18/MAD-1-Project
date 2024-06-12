@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 text-center">Admin Dashboard</h1>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                </div>
+                <div class="card-footer text-end" style="font-size: 24px;">
+                    {{ total_users }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Books</h5>
+                </div>
+                <div class="card-footer text-end" style="font-size: 24px;">
+                    {{ total_books }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sections</h5>
+                </div>
+                <div class="card-footer text-end" style="font-size: 24px;">
+                    {{ total_sections }}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Distribution of Books by Section</h5>
+                    <img src="{{ url_for('static', filename='charts/admin_pie_chart.png') }}" alt="Pie Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Distribution of Books by Status</h5>
+                    <img src="{{ url_for('static', filename='charts/admin_bar_chart.png') }}" alt="Bar Chart" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

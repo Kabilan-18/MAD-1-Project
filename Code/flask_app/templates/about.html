@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <p class="lead text-center mt-2">
+                Welcome to my Flask Library Management System! This web application is designed to help libraries manage their book inventory efficiently and users to easily find and request books.
+            </p>
+            <h2>Features</h2>
+            <ul>
+                <li>User Registration and Authentication: Users can create accounts, log in, and manage their profile.</li>
+                <li>Search Functionality: Users can search for books or sections based on various criteria.</li>
+                <li>Section Management: Librarians can manage library sections, including adding, updating, and deleting sections.</li>
+                <li>Book Management: Librarians can add, update, and delete books, along with uploading PDF files for each book.</li>
+                <li>Book Requests: Users can request books and view their pending requests, issued books, and completed books.</li>
+                <li>Admin Dashboard: Provides statistics and visualizations for administrators to monitor system activity.</li>
+                <li>User Dashboard: Gives users an overview of their book-related activities.</li>
+                <li>Password Change: Users can change their passwords securely within the application.</li>
+            </ul>
+            <h3>API Endpoints</h3>
+            <ul>
+                <li><code>/api/section</code> - Endpoint for managing library sections.</li>
+                <li><code>/api/book</code> - Endpoint for managing books.</li>
+                <li><code>/api/graph/bar_chart</code> - Endpoint for generating a bar chart.</li>
+                <li><code>/api/graph/pie_chart</code> - Endpoint for generating a pie chart.</li>
+            </ul>
+            <h2>Technologies Used</h2>
+            <ul>
+                <li>Flask: A micro web framework for Python.</li>
+                <li>SQLAlchemy: An SQL toolkit and Object-Relational Mapping (ORM) library for Python.</li>
+                <li>Flask-Login: A Flask extension for managing user sessions.</li>
+                <li>Flask-WTF: A Flask extension for handling web forms.</li>
+                <li>bcrypt: A password hashing library.</li>
+                <li>Matplotlib: A plotting library for creating visualizations.</li>
+                <li>Seaborn: A statistical data visualization library based on Matplotlib.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

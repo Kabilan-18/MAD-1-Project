@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card border-0 shadow mb-4">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="static/sections.jpeg" class="img-fluid rounded-start" alt="Card Image" style="object-fit: cover; height: 100%;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Manage Sections</h2>
+                    <p class="card-text">Here you can create, update, and delete sections.</p>
+                    <form method="POST" action="{{ url_for('add_section') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            {{ form.name(class="form-control", id="name", placeholder="Enter section name", required=True) }}
+                            <div class="invalid-feedback">
+                                Please provide a name for the section.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description(class="form-control", id="description", placeholder="Enter section description") }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> &nbsp; Add Section
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Existing Sections</h2>
+            {% if sections %}
+                {% for section in sections %}
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>{{ section.name }}</h5>
+                        <p>{{ section.description }}</p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#updateModal{{ section.id }}">Update</button>
+                        <button type="button" class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ section.id }}">Delete</button>
+                        <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#booksModal{{ section.id }}">View Books</button>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="updateModal{{ section.id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ section.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel{{ section.id }}">Update Section</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ url_for('update_section', section_id=section.id) }}">
+                                    {{ form.hidden_tag() }}
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        {{ form.name(class="form-control", id="name", placeholder="Enter section name", value=section.name) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description" placeholder="Enter section description">{{ section.description }}</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteModal{{ section.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ section.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ section.id }}">Delete Section</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the '{{ section.name }}' section?</p>
+                                <p>Deleting a section will also delete the books associated with it.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="POST" action="{{ url_for('delete_section', section_id=section.id) }}">
+                                    {{ form.hidden_tag() }}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="booksModal{{ section.id }}" tabindex="-1" aria-labelledby="booksModalLabel{{ section.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="booksModalLabel{{ section.id }}">Books in '{{ section.name }}' Section</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% if section.books %}
+                                    <ol>
+                                        {% for book in section.books %}
+                                            <li>{{ book.name }} by {{ book.authors }}</li>
+                                        {% endfor %}
+                                    </ol>
+                                {% else %}
+                                    <p>There are no books found in this section.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="col">
+                <div class="alert alert-info" role="info">
+                    <i class="fas fa-exclamation-circle"></i> &nbsp; No Sections found. Please add a section to get started.
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
