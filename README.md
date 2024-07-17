@@ -41,5 +41,5 @@ This repository contains my project developed for the Mobile Application Develop
 
 2. Run the application
     ```bash
-   python app.py
+   python run.py
     ```
